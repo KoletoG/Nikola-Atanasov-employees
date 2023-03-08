@@ -27,6 +27,8 @@ namespace Employees
 
         private void button1_Click(object sender, EventArgs e)
         {
+            table.Columns.Clear();
+            table.Rows.Clear();
             var loadDialog = new OpenFileDialog { Filter = "Text File|*.txt" };
             loadDialog.ShowDialog();
             string[] lines = File.ReadAllLines($@"{loadDialog.FileName}");
@@ -37,15 +39,18 @@ namespace Employees
             table.Columns.Add("Project ID", typeof(string));
             table.Columns.Add("Days Worked", typeof(string));
             Dictionary<int, int> projId = new Dictionary<int, int>();
+            Dictionary<int, DateTimeOffset> dateStarted = new Dictionary<int, DateTimeOffset>();
+            Dictionary<int, DateTimeOffset> dateEnded = new Dictionary<int, DateTimeOffset>();
             // Declaring more formats that can be DateTime parsed
             string[] formats = { "MM/dd/yyyy", "yyyy-MM-dd", "MMMM dd", "dddd, dd MMMM yyyy", "yyyy MMMM" };
-            // Fills up the project - employee pairs + calculates the time worked on every project
+            // Calculates time worked between dates + neglects overlapping dates 
             for (int i = 0; i < lines.Length; i++)
             {
                 data = lines[i].ToString().Split(',');
                 DateTimeOffset dateStart = new DateTimeOffset();
-                DateTimeOffset dateEnd = new DateTimeOffset();
 
+                DateTimeOffset dateEnd = new DateTimeOffset();
+                int projectId = int.Parse(data[1].Trim());
                 dateStart = DateTimeOffset.ParseExact(data[2].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
                 if (data[3].Trim() != "NULL")
                 {
@@ -55,16 +60,56 @@ namespace Employees
                 {
                     dateEnd = DateTimeOffset.UtcNow;
                 }
-                TimeSpan timeSpan = dateEnd - dateStart;
-                int days = timeSpan.Days;
-
+                TimeSpan timeSpan;
+                int days = 0;
                 if (!projId.ContainsKey(int.Parse(data[1].Trim())))
                 {
-                    projId.Add(int.Parse(data[1].Trim()), days);
+                    projId.Add(projectId, days);
                 }
-                else
+                if (!dateStarted.ContainsKey(int.Parse(data[1].Trim())))
                 {
-                    projId[int.Parse(data[1].Trim())] += days;
+                    dateStarted.Add(projectId, dateStart);
+                    dateEnded.Add(projectId, dateEnd);
+                }
+                else if (dateStarted[projectId] > dateStart && dateEnd >= dateEnded[projectId])
+                {
+                    dateStarted[projectId] = dateStart;
+                    dateEnded[projectId] = dateEnd;
+                }
+                else if (dateStarted[projectId] > dateStart && dateEnd >= dateStarted[projectId])
+                {
+                    dateStarted[projectId] = dateStart;
+                }
+                else if (dateStarted[projectId] <= dateStart && dateStart <= dateEnded[projectId])
+                {
+                    dateEnded[projectId] = dateEnd;
+                }
+                else if (dateEnd < dateStarted[projectId])
+                {
+                    timeSpan = dateStarted[projectId] - dateEnd;
+                    days = timeSpan.Days;
+                    projId[projectId] -= days;
+                    dateStarted[projectId] = dateStart;
+                }
+                else if (dateStart > dateEnded[projectId])
+                {
+                    timeSpan = dateStart - dateEnded[projectId];
+                    days = timeSpan.Days;
+                    projId[projectId] -= days;
+                }
+            }
+            foreach (KeyValuePair<int, DateTimeOffset> kvp in dateStarted)
+            {
+                foreach (KeyValuePair<int, DateTimeOffset> kvp1 in dateEnded)
+                {
+                    if (kvp.Key == kvp1.Key)
+                    {
+                        TimeSpan timeSpan;
+                        int days = 0;
+                        timeSpan = dateEnded[kvp1.Key] - dateStarted[kvp.Key];
+                        days = timeSpan.Days;
+                        projId[kvp.Key] += days;
+                    }
                 }
             }
             int max = 0;
@@ -104,8 +149,8 @@ namespace Employees
             List<int> passedIDs = new List<int>();
             passedIDs.Add(keyMax);
             // Adds every other project that is worked on by the previous pair of employees
-            for (int i = 0; i < lines.Length; i++) 
-            { 
+            for (int i = 0; i < lines.Length; i++)
+            {
                 data = lines[i].ToString().Split(',');
                 if (int.Parse(data[0].Trim()) == empl1)
                 {
@@ -136,6 +181,7 @@ namespace Employees
                     }
                 }
             }
+
             dataGridView1.DataSource = table;
         }
     }
