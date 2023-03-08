@@ -33,16 +33,21 @@ namespace Employees
             loadDialog.ShowDialog();
             string[] lines = File.ReadAllLines($@"{loadDialog.FileName}");
             string[] data;
-
             table.Columns.Add("Employee ID #1", typeof(string));
             table.Columns.Add("Employee ID #2", typeof(string));
             table.Columns.Add("Project ID", typeof(string));
-            table.Columns.Add("Days Worked", typeof(string));
+            table.Columns.Add("Days Worked", typeof(int));
             Dictionary<int, int> projId = new Dictionary<int, int>();
             Dictionary<int, DateTimeOffset> dateStarted = new Dictionary<int, DateTimeOffset>();
             Dictionary<int, DateTimeOffset> dateEnded = new Dictionary<int, DateTimeOffset>();
             // Declaring more formats that can be DateTime parsed
-            string[] formats = { "MM/dd/yyyy", "yyyy-MM-dd", "MMMM dd", "dddd, dd MMMM yyyy", "yyyy MMMM" };
+            string[] formats = { "MM/dd/yyyy", "yyyy-MM-dd","d/MM/yyyy",
+                "MMMM dd","dd.MM.yyyy", "dd/MM/yyyy","dd-MM-yyyy",
+                "dddd, dd MMMM yyyy", "yyyy MMMM","M/d/yyyy h:mm:ss tt",
+                "M/d/yyyy h:mm tt", "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss",
+                     "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt",
+                     "M/d/yyyy h:mm", "M/d/yyyy h:mm",
+                     "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm" };
             // Calculates time worked between dates + neglects overlapping dates 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -146,8 +151,10 @@ namespace Employees
             row[3] = max.ToString();
             table.Rows.Add(row);
             string[] data1;
-            List<int> passedIDs = new List<int>();
-            passedIDs.Add(keyMax);
+            List<int> passedIDs = new List<int>
+            {
+                keyMax
+            };
             // Adds every other project that is worked on by the previous pair of employees
             for (int i = 0; i < lines.Length; i++)
             {
@@ -181,8 +188,41 @@ namespace Employees
                     }
                 }
             }
+            // Below is a solution if all employee pairs should appear in the datagrid who worked on common projects
+            /*
+            for (int i = 0; i < lines.Length; i++)
+            {
+                data = lines[i].ToString().Split(',');
+                    bool passed = false;
+                    row[0] = data[0];
+                    for (int k = 0; k < passedIDs.Count(); k++)
+                    {
+                        if (int.Parse(data[1].Trim()) == passedIDs[k])
+                        {
+                            passed = true;
+                        }
 
+                    }
+                    if (passed == false)
+                    {
+                        for (int g = 0; g < lines.Length; g++)
+                        {
+                            data1 = lines[g].ToString().Split(',');
+                            if (data1[0] != data[0] && data[1] == data1[1])
+                            {
+                                row[1] = data1[0];
+                                row[2] = data[1].Trim();
+                                row[3] = projId[int.Parse(data[1].Trim())].ToString();
+                                passedIDs.Add(int.Parse(data[1].Trim()));
+                                table.Rows.Add(row);
+                            }
+                        }
+                    }
+                }
+            */
             dataGridView1.DataSource = table;
+            table.Columns.Cast<int>();
+            dataGridView1.Sort(dataGridView1.Columns[3], ListSortDirection.Descending);
         }
     }
 }
