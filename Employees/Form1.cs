@@ -15,6 +15,7 @@ namespace Employees
 {
     public partial class Form1 : Form
     {
+        // Side note: The code could have been a lot better and cleaner
         public Form1()
         {
             InitializeComponent();
@@ -48,12 +49,11 @@ namespace Employees
                      "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt",
                      "M/d/yyyy h:mm", "M/d/yyyy h:mm",
                      "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm" };
-            // Calculates time worked between dates + neglects overlapping dates 
+            // Calculates time worked between dates + takes care of overlapping dates 
             for (int i = 0; i < lines.Length; i++)
             {
                 data = lines[i].ToString().Split(',');
                 DateTimeOffset dateStart = new DateTimeOffset();
-
                 DateTimeOffset dateEnd = new DateTimeOffset();
                 int projectId = int.Parse(data[1].Trim());
                 dateStart = DateTimeOffset.ParseExact(data[2].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
@@ -149,15 +149,15 @@ namespace Employees
             int empl2 = int.Parse(row[1]);
             row[2] = keyMax.ToString();
             row[3] = max.ToString();
-            string row1 = row[0];
-            string row2 = row[1];
-           
             table.Rows.Add(row);
             string[] data1;
             List<int> passedIDs = new List<int>
             {
                 keyMax
             };
+            // These 2 rows are for later use - Third solution
+            string row1 = row[0];
+            string row2 = row[1];
             // Adds every other project that is worked on by the previous pair of employees
             for (int i = 0; i < lines.Length; i++)
             {
