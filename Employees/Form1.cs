@@ -149,62 +149,9 @@ namespace Employees
             int empl2 = int.Parse(row[1]);
             row[2] = keyMax.ToString();
             row[3] = max.ToString();
-            // The code below is a probably unsuccessful try at making the sample output (i really didn't understand what was that '8')
-            /*
-            DateTimeOffset startDateSol3 = new DateTimeOffset();
-            DateTimeOffset endDateSol3 = new DateTimeOffset();
-            DateTimeOffset startDate1Sol3 = new DateTimeOffset();
-            DateTimeOffset endDate1Sol3 = new DateTimeOffset();
-            bool secondAttempt = false;
-            for(int i = 0; i < lines.Length; i++)
-            {
-                data = lines[i].ToString().Split(',');
-                if (int.Parse(data[1].Trim()) == keyMax && secondAttempt==false)
-                {
-                    startDateSol3 = DateTimeOffset.ParseExact(data[2].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
-                    if (data[3].Trim()!="NULL")
-                    {
-                        endDateSol3 = DateTimeOffset.ParseExact(data[3].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
-
-                    }
-                    else
-                    {
-                        endDateSol3 = DateTimeOffset.UtcNow;
-                    }
-                    secondAttempt = true;
-                }
-                else if(int.Parse(data[1].Trim()) == keyMax && secondAttempt == true)
-                {
-                    startDate1Sol3 = DateTimeOffset.ParseExact(data[2].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
-                    if (data[3].Trim() != "NULL")
-                    {
-                        endDate1Sol3 = DateTimeOffset.ParseExact(data[3].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
-
-                    }
-                    else
-                    {
-                        endDate1Sol3 = DateTimeOffset.UtcNow;
-                    }
-                    break;
-                }
-            }
-            TimeSpan t1 = endDateSol3 - startDateSol3;
-            TimeSpan t2 = endDate1Sol3 - startDate1Sol3;
-            int years=0;
-            if (t1.CompareTo(t2) < 0)
-            {
-                years = (t2.Days - t1.Days) / 30 / 12;
-            }
-            else if(t1.CompareTo(t2)>0)
-            {
-                years = (t1.Days - t2.Days) / 30 / 12;
-            }
-            else
-            {
-                years = t1.Days/30/12;
-            }
-            label1.Text = row[0] + ", " + row[1] + ", " + years;  
-            */
+            string row1 = row[0];
+            string row2 = row[1];
+           
             table.Rows.Add(row);
             string[] data1;
             List<int> passedIDs = new List<int>
@@ -276,6 +223,64 @@ namespace Employees
                         }
                     }
                 }
+            */
+
+            // The code below is a probably unsuccessful try at making the sample output (i really didn't understand what was that '8')
+           
+            /*
+            DateTimeOffset startDateSol3 = new DateTimeOffset();
+            DateTimeOffset endDateSol3 = new DateTimeOffset();
+            DateTimeOffset startDate1Sol3 = new DateTimeOffset();
+            DateTimeOffset endDate1Sol3 = new DateTimeOffset();
+            bool secondAttempt = false;
+            for(int i = 0; i < lines.Length; i++)
+            {
+                data = lines[i].ToString().Split(',');
+                if (int.Parse(data[1].Trim()) == keyMax && secondAttempt==false)
+                {
+                    startDateSol3 = DateTimeOffset.ParseExact(data[2].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
+                    if (data[3].Trim()!="NULL")
+                    {
+                        endDateSol3 = DateTimeOffset.ParseExact(data[3].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
+
+                    }
+                    else
+                    {
+                        endDateSol3 = DateTimeOffset.UtcNow;
+                    }
+                    secondAttempt = true;
+                }
+                else if(int.Parse(data[1].Trim()) == keyMax && secondAttempt == true)
+                {
+                    startDate1Sol3 = DateTimeOffset.ParseExact(data[2].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
+                    if (data[3].Trim() != "NULL")
+                    {
+                        endDate1Sol3 = DateTimeOffset.ParseExact(data[3].Trim(), formats, new CultureInfo("en-GB"), DateTimeStyles.None);
+
+                    }
+                    else
+                    {
+                        endDate1Sol3 = DateTimeOffset.UtcNow;
+                    }
+                    break;
+                }
+            }
+            TimeSpan t1 = endDateSol3 - startDateSol3;
+            TimeSpan t2 = endDate1Sol3 - startDate1Sol3;
+            int years=0;
+            if (t1.CompareTo(t2) < 0)
+            {
+                years = (t2.Days - t1.Days) / 30 / 12;
+            }
+            else if(t1.CompareTo(t2)>0)
+            {
+                years = (t1.Days - t2.Days) / 30 / 12;
+            }
+            else
+            {
+                years = t1.Days/30/12;
+            }
+            label1.Text = row1 + ", " + row2 + ", " + years;  
             */
             dataGridView1.DataSource = table;
             table.Columns.Cast<int>();
