@@ -27,7 +27,6 @@ namespace Employees
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //Trqbva datata da ne se vmestva v drugata, vsichki proekti na top pichagite zaedno
             var loadDialog = new OpenFileDialog { Filter = "Text File|*.txt" };
             loadDialog.ShowDialog();
             string[] lines = File.ReadAllLines($@"{loadDialog.FileName}");
@@ -38,7 +37,9 @@ namespace Employees
             table.Columns.Add("Project ID", typeof(string));
             table.Columns.Add("Days Worked", typeof(string));
             Dictionary<int, int> projId = new Dictionary<int, int>();
+            // Declaring more formats that can be DateTime parsed
             string[] formats = { "MM/dd/yyyy", "yyyy-MM-dd", "MMMM dd", "dddd, dd MMMM yyyy", "yyyy MMMM" };
+            // Fills up the project - employee pairs + calculates the time worked on every project
             for (int i = 0; i < lines.Length; i++)
             {
                 data = lines[i].ToString().Split(',');
@@ -68,6 +69,7 @@ namespace Employees
             }
             int max = 0;
             int keyMax = 0;
+            // Checks which project has the most worked on time
             foreach (KeyValuePair<int, int> kvp in projId)
             {
                 if (projId[kvp.Key] > max)
@@ -78,6 +80,7 @@ namespace Employees
             }
             bool firstPassed = false;
             string[] row = new string[4];
+            // Adds a row with the employees and the most worked on project
             for (int i = 0; i < lines.Length; i++)
             {
                 data = lines[i].ToString().Split(',');
@@ -100,8 +103,9 @@ namespace Employees
             string[] data1;
             List<int> passedIDs = new List<int>();
             passedIDs.Add(keyMax);
-            for (int i = 0; i < lines.Length; i++)
-            {
+            // Adds every other project that is worked on by the previous pair of employees
+            for (int i = 0; i < lines.Length; i++) 
+            { 
                 data = lines[i].ToString().Split(',');
                 if (int.Parse(data[0].Trim()) == empl1)
                 {
